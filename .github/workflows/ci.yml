@@ -16,19 +16,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-name: Package Test
+name: CI Tests
 
 on: [push, pull_request]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
         with:
-          fetch-depth: 0
-      - name: Pacakge Test
-        uses: xlui/action-maven-cli@jdk8
-        with:
-          lifecycle: 'clean validate package'
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -Pspark-3.4
